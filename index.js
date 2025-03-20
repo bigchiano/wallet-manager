@@ -4,6 +4,7 @@ const ethUtil = require('ethereumjs-util');
 const createHash = require('create-hash');
 const bs58check = require('bs58check');
 const { createPeercoinWif } = require('./libs');
+require("dotenv").config()
 
 // Variables
 const ethPath = "m/44'/60'/0'/0/"; // last param should be {account_index}
@@ -97,14 +98,15 @@ function padWithLeadingZeros(num, totalLength) {
 }
 
 (async () => {
-    const m = ""
-    const res = await generateEthAccounts(m, 0, 50)
-    // const res = await generateBtcAccounts("", 0, 10)
-    // const res = await generatePpcAccounts(m, 0, 1)
+    const m = process.env.SEED || ""
+    const limit = process.env.LIMIT || 10
+    const coin = process.env.COIN || 'ETH'
     const paddingZeros = 2
-    
-
-
+    let res  = []
+    if (coin === 'ETH') res = await generateEthAccounts(m, 0, limit)
+    if (coin === 'BTC') res = await generateBtcAccounts(m, 0, limit)
+    if (coin === 'PPC') res = await generatePpcAccounts(m, 0, limit)
+        
     res[0].map((addr, index) => {
         console.log(`${padWithLeadingZeros(index + 1, paddingZeros)}: ${addr}`)
     })
